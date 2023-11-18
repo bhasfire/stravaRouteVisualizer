@@ -20,9 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function visualizeRoute(route) {
-    // Use the already initialized viewer here
     const positions = route.map(point => Cesium.Cartesian3.fromDegrees(point.lon, point.lat, point.ele));
+    const totalPoints = positions.length; // Ensure this is accessible within the function
+    let currentIndex = 0;
+    const speed = 0.1; // Adjust speed as needed
 
+    // Create the route polyline
     viewer.entities.add({
         polyline: {
             positions: positions,
@@ -31,5 +34,39 @@ function visualizeRoute(route) {
         }
     });
 
-    viewer.zoomTo(viewer.entities);
+    // Create an entity to represent the current position
+    const routeEntity = viewer.entities.add({
+        position: positions[0],
+        point: {
+            pixelSize: 10,
+            color: Cesium.Color.BLUE
+        }
+    });
+
+    const heightAboveTrack = 100; // Height above the route in meters
+    const pitchAngle = -30; // Adjust for a better view
+
+    viewer.clock.onTick.addEventListener(() => {
+        currentIndex = (currentIndex + speed) % totalPoints;
+        const floorIndex = Math.floor(currentIndex);
+        if (floorIndex < totalPoints) {
+            const currentPosition = positions[floorIndex];
+
+            if (currentPosition) {
+                routeEntity.position = currentPosition;
+
+                // Using lookAt to position the camera
+                viewer.camera.lookAt(
+                    currentPosition, // The target position to look at
+                    new Cesium.HeadingPitchRange(
+                        viewer.camera.heading, // Keep current heading or adjust as needed
+                        Cesium.Math.toRadians(pitchAngle), // Pitch angle
+                        heightAboveTrack // Height above the target position
+                    )
+                );
+            }
+        }
+    });
+
 }
+
