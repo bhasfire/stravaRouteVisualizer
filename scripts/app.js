@@ -1,10 +1,9 @@
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiZTVkMzhjYS1kMDc4LTRlMzYtOWNkNy05ZTY4OTZiMzNkYWIiLCJpZCI6MTc4NjIwLCJpYXQiOjE3MDAyNjA4MDJ9.exY7Ym_WUi_59ZWn18FKzw8Ue62LzQhJmdKHCd8JxUE';
 
-// import { visualizeRoute } from './scripts/routeVisualizer.js';
-
-let viewer;  // Declare the viewer at the top scope
-let animationControl = { isAnimating: false }; // Wrap isAnimating in an object
-let speedControl = { speed: 0.1 }; // Wrap speed in an object
+let viewer;  
+let routeData; // Declare a variable to store the route data
+let animationControl = { isAnimating: false, isFirstStart: true };
+let speedControl = { speed: 0.1 }; 
 
 document.addEventListener('DOMContentLoaded', () => {
     viewer = new Cesium.Viewer('cesiumContainer', {
@@ -21,16 +20,16 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('data/atx23_marathon.gpx')
         .then(response => response.text())
         .then(gpxText => {
-            const data = parseGPX(gpxText);
-            console.log(data); // Log to check the route data
+            routeData = parseGPX(gpxText); // Assign data to the global variable
+            console.log(routeData); // Log to check the route data
 
             // Call preloadTerrainData here
-            preloadTerrainData(data.coordinates, viewer.terrainProvider, () => {
+            preloadTerrainData(routeData.coordinates, viewer.terrainProvider, () => {
                 console.log("Terrain data preloaded");
                 document.getElementById('startButton').disabled = false;
             });
 
-            visualizeRoute(data, viewer, animationControl, speedControl); // Pass the speed object
+            window.visualizeRoute(routeData, viewer, animationControl, speedControl);
 
         })
         .catch(error => {
@@ -38,9 +37,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
 
-    document.getElementById('startButton').addEventListener('click', () => {
-        animationControl.isAnimating = true;
-    });
+        document.getElementById('startButton').addEventListener('click', () => {
+            if (animationControl.isFirstStart && routeData) {
+                // Ensure routeData is available before flying to start
+                flyToStart(viewer, Cesium.Cartesian3.fromDegrees(routeData.coordinates[0].lon, routeData.coordinates[0].lat, routeData.coordinates[0].ele), () => {
+                    animationControl.isAnimating = true;
+                    animationControl.isFirstStart = false;
+                });
+            } else {
+                animationControl.isAnimating = true;
+            }
+        });
     
     document.getElementById('pauseButton').addEventListener('click', () => {
         animationControl.isAnimating = false;
@@ -58,6 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
 });
+
+function flyToStart(viewer, startPosition, callback) {
+    viewer.camera.flyTo({
+        destination: startPosition,
+        complete: callback,
+        duration: 3 // Duration in seconds, adjust as needed
+    });
+}
 
 function preloadTerrainData(coordinates, terrainProvider, callback) {
     console.log("Preloading terrain data..."); // Log preloading start
