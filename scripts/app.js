@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showCreditsOnScreen: false,
     }));
 
-    fetch('data/route.gpx')
+    fetch('data/IMLP_run.gpx')
         .then(response => response.text())
         .then(gpxText => {
             const data = parseGPX(gpxText);
@@ -56,6 +56,9 @@ function visualizeRoute(data) {
     const totalPoints = positions.length;
     let currentIndex = 0;
     const speed = 0.1;
+
+    let currentHeading = 0;
+    let targetHeading = 0;
 
     // Create the polyline
     viewer.entities.add({
@@ -120,11 +123,14 @@ function visualizeRoute(data) {
                 routeEntity.position = updatedPosition;
                 routeEntity.orientation = Cesium.Transforms.headingPitchRollQuaternion(updatedPosition, new Cesium.HeadingPitchRoll(heading, 0, 0));
 
+                const headingDifference = targetHeading - currentHeading;
+                currentHeading += headingDifference * 0.1; // Adjust the 0.1 factor for smoother or quicker transition
+
                 // Smooth camera movement
                 viewer.camera.lookAt(
                     updatedPosition, 
                     new Cesium.HeadingPitchRange(
-                        Cesium.Math.toRadians(0), // Heading
+                        currentHeading + -Math.PI /2,
                         Cesium.Math.toRadians(-30), // Pitch
                         100 // Range
                     )
