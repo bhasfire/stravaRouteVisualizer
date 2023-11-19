@@ -82,7 +82,7 @@ function visualizeRoute(data, viewer, isAnimating, speed) {
                 viewer.camera.lookAt(
                     updatedPosition, 
                     new Cesium.HeadingPitchRange(
-                        currentHeading + -Math.PI /2,
+                        currentHeading + -Math.PI,
                         Cesium.Math.toRadians(-30), // Pitch
                         100 // Range
                     )

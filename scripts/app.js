@@ -1,4 +1,8 @@
-Cesium.Ion.defaultAccessToken = process.env.CESIUM_ION_TOKEN;
+//require('dotenv').config();
+
+// Cesium.Ion.defaultAccessToken = process.env.CESIUM_ION_TOKEN;
+Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiZTVkMzhjYS1kMDc4LTRlMzYtOWNkNy05ZTY4OTZiMzNkYWIiLCJpZCI6MTc4NjIwLCJpYXQiOjE3MDAyNjA4MDJ9.exY7Ym_WUi_59ZWn18FKzw8Ue62LzQhJmdKHCd8JxUE';
+
 
 let viewer;  
 let routeData; // Declare a variable to store the route data
@@ -13,7 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add Google's Photorealistic 3D Tiles
     const tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
-        url: 'https://tile.googleapis.com/v1/3dtiles/root.json?key=${process.env.GOOGLE_TILESET_KEY}',
+        // url: 'https://tile.googleapis.com/v1/3dtiles/root.json?key=${process.env.GOOGLE_TILESET_KEY}',
+        url: 'https://tile.googleapis.com/v1/3dtiles/root.json?key=AIzaSyCbWqOhzPZhDPVbRS_xd4p9KsHTZKbmju4',
         showCreditsOnScreen: false,
     }));
 
@@ -30,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             window.visualizeRoute(routeData, viewer, animationControl, speedControl);
+            window.processRouteForMileMarkers(routeData, viewer);
 
         })
         .catch(error => {
@@ -60,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.getElementById('speedDownButton').addEventListener('click', () => {
         speedControl.speed -= 0.5; // Decrease speed
-        if (speedControl.speed < 0.1) speedControl.speed = 0.1; // Prevent negative speed
         console.log("Speed decreased to:", speedControl.speed); // Log the new speed
     });
     
