@@ -1,13 +1,26 @@
 // scripts/mileMarker.js
 
 let mileMarkers = [];
+let showMileMarkers = true; // Default value
+let showPace = true;
+let showTime = true;
 
 function updateMileMarkers(viewer, routeData, useEstimatedPace) {
     // Remove existing mile markers
-    mileMarkers.forEach(marker => viewer.entities.remove(marker));
-    mileMarkers = [];
+    clearMileMarkers(viewer);
 
     // Add new mile markers with updated pace calculation
+    processRouteForMileMarkers(routeData, viewer, useEstimatedPace);
+}
+
+function updateMileMarkerDisplay(options) {
+    if (options.hasOwnProperty('showPace')) {
+        showPace = options.showPace;
+    }
+    if (options.hasOwnProperty('showTime')) {
+        showTime = options.showTime;
+    }
+    // Re-process the route to update mile markers
     processRouteForMileMarkers(routeData, viewer, useEstimatedPace);
 }
 
@@ -57,26 +70,54 @@ function addMileMarker(viewer, lat, lon, mileNumber, labelContent) {
 
     Cesium.sampleTerrainMostDetailed(viewer.terrainProvider, positions)
         .then(function(updatedPositions) {
+            // Split the label content by line breaks to separate mile, time, and pace
+            let contentParts = labelContent.split('\n');
+
+            // Based on settings, filter out pace or time from the label
+            if (!showPace) {
+                contentParts = contentParts.filter(part => !part.includes('Pace'));
+            }
+            if (!showTime) {
+                contentParts = contentParts.filter(part => !part.includes('Time'));
+            }
+
+            // Re-join the parts to form the final label content
+            let finalLabelContent = contentParts.join('\n');
+
+            // Add the mile marker with the updated label content
             const entity = viewer.entities.add({
                 position: Cesium.Cartesian3.fromDegrees(lon, lat, updatedPositions[0].height + 2),
-                point: {
-                    pixelSize: 15,
-                    color: Cesium.Color.BLUE,
-                    disableDepthTestDistance: Number.POSITIVE_INFINITY
+                billboard: {
+                    image: './icons/pin3.png', // Path to your checkpoint image
+                    scale: 1, // Adjust scale as needed
+                    pixelOffset: new Cesium.Cartesian2(0, -25), // Adjust offset to position the icon correctly relative to the label
+                    distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 20000) // Adjust max distance as needed
                 },
                 label: {
-                    text: labelContent,
-                    font: '14pt sans-serif',
-                    pixelOffset: new Cesium.Cartesian2(0, 15),
-                    disableDepthTestDistance: Number.POSITIVE_INFINITY
+                    text: finalLabelContent,
+                    font: 'bold 9pt Arial, sans-serif', // Increased font size
+                    fillColor: Cesium.Color.WHITE, // Bright font color
+                    pixelOffset: new Cesium.Cartesian2(0, -50),
+                    style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                    outlineWidth: 5, // Thicker outline
+                    outlineColor: Cesium.Color.BLACK, // Dark outline for contrast
+                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                    horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                    scaleByDistance: new Cesium.NearFarScalar(1e2, 1.5, 1.5e7, 0.5), // Adjust values for your need
+                    distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 10000), // Adjust max distance as needed
+                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                    translucencyByDistance: new Cesium.NearFarScalar(1e3, 1.0, 1.5e7, 0.5) // Glow effect
                 }
             });
+            
             mileMarkers.push(entity);
         });
 }
 
 
 function processRouteForMileMarkers(routeData, viewer, useEstimatedPace = false) {
+    clearMileMarkers(viewer);
+
     let cumulativeDistance = 0; // Distance in kilometers
     let movingTimeSeconds = 0; // Moving time in seconds for estimated pace
     let elapsedTimeSeconds = 0; // Elapsed time in seconds for total elapsed pace
@@ -88,29 +129,26 @@ function processRouteForMileMarkers(routeData, viewer, useEstimatedPace = false)
     routeData.coordinates.forEach((point, index) => {
         if (index > 0) {
             const speed = calculateSpeed(lastPoint.lat, lastPoint.lon, lastPoint.time, point.lat, point.lon, point.time);
-            
             const segmentDistance = getDistanceBetweenPoints(lastPoint.lat, lastPoint.lon, point.lat, point.lon);
             cumulativeDistance += segmentDistance;
-            elapsedTimeSeconds += (new Date(point.time) - new Date(lastPoint.time)) / 1000;
 
             if (useEstimatedPace && speed >= speedThresholdKmH) {
                 movingTimeSeconds += (new Date(point.time) - new Date(lastPoint.time)) / 1000;
+            } else {
+                elapsedTimeSeconds += (new Date(point.time) - new Date(lastPoint.time)) / 1000;
             }
 
             if (cumulativeDistance >= 1.60934) { // Check if 1 mile is covered
                 mileCounter++;
-                let pace;
-                if (useEstimatedPace) {
-                    pace = calculatePace(cumulativeDistance, movingTimeSeconds); // Use moving time for this mile
-                } else {
-                    pace = calculatePace(cumulativeDistance, elapsedTimeSeconds); // Use elapsed time for this mile
-                }
+                let pace = useEstimatedPace ? calculatePace(cumulativeDistance, movingTimeSeconds) : calculatePace(cumulativeDistance, elapsedTimeSeconds);
 
                 console.log(`Mile ${mileCounter}: Time - ${formatTimeToLocal(point.time)}, Pace - ${pace} min/mi`);
-                
-                const labelContent = `Mile ${mileCounter}\nTime: ${formatTimeToLocal(point.time)}\nPace: ${pace} min/mi`;
-                addMileMarker(viewer, point.lat, point.lon, mileCounter, labelContent);
-                
+
+                if (showMileMarkers) {
+                    const labelContent = `Mile ${mileCounter}\nTime: ${formatTimeToLocal(point.time)}\nPace: ${pace} min/mi`;
+                    addMileMarker(viewer, point.lat, point.lon, mileCounter, labelContent);
+                }
+
                 // Reset distance and time for the next mile
                 cumulativeDistance = 0;
                 movingTimeSeconds = 0;
@@ -121,4 +159,22 @@ function processRouteForMileMarkers(routeData, viewer, useEstimatedPace = false)
     });
 }
 
+function toggleMileMarkers(shouldShow) {
+    showMileMarkers = shouldShow;
+    if (!shouldShow) {
+        mileMarkers.forEach(marker => viewer.entities.remove(marker));
+        mileMarkers = [];
+    } else {
+        // Re-process the route to show mile markers
+        processRouteForMileMarkers(routeData, viewer, useEstimatedPace);
+    }
+}
+
+function clearMileMarkers(viewer) {
+    mileMarkers.forEach(marker => viewer.entities.remove(marker));
+    mileMarkers = [];
+}
+
+window.updateMileMarkerDisplay = updateMileMarkerDisplay;
+window.toggleMileMarkers = toggleMileMarkers;
 window.processRouteForMileMarkers = processRouteForMileMarkers;

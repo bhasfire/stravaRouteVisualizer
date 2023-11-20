@@ -21,9 +21,22 @@
         <input type="checkbox" id="togglePace" class="form-checkbox h-5 w-5 text-blue-600" checked>
         <span class="ml-2 text-gray-700">Use Moving Time Pace</span>
       </label>
-      <div id="timeDisplay" class="time-display-class">Time: --:--:--</div>
-      <div id="paceDisplay" class="pace-display-class">Pace: -- min/mi</div>
+      <label>
+        <input type="checkbox" id="toggleMileMarkers" checked>
+        Show Mile Markers
+      </label>
+      <label>
+        <input type="checkbox" id="togglePaceDisplay" checked disabled>
+        Show Pace
+      </label>
+      <label>
+        <input type="checkbox" id="toggleTimeDisplay" checked disabled>
+        Show Time
+      </label>
       <div id="routeNameDisplay">Route: --</div>
+      <div id="timeDisplay" class="time-display-class">Time: --:--:--</div>
+      <div id="distanceDisplay" class="distance-display-class">Distance: -- mi</div>
+      <div id="paceDisplay" class="pace-display-class">Pace: -- min/mi</div>
       <div id="elevationDisplay" class="elevation-display-class">Elevation: -- meters</div>
       <div id="heartRateDisplay">Heart Rate: -- bpm</div>
       <div id="cadenceDisplay">Cadence: -- rpm</div>

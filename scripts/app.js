@@ -8,7 +8,7 @@ let viewer;
 let routeData; // Declare a variable to store the route data
 let animationControl = { isAnimating: false, isFirstStart: true };
 let speedControl = { speed: 0.1 }; 
-// let useEstimatedPace = true; // Default value based on checkbox's initial state
+let useEstimatedPace = true; // Default value based on checkbox's initial state
 
 document.addEventListener('DOMContentLoaded', async () => {
     const terrainProvider = await Cesium.createWorldTerrainAsync();
@@ -25,46 +25,70 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Error loading 3D Tiles:', error);
     });
 
-        document.getElementById('fileInput').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const gpxText = e.target.result;
-                    routeData = parseGPX(gpxText);
-                    console.log(routeData);
 
-                    document.getElementById('routeNameDisplay').textContent = `Route: ${routeData.name}`;
-                    // Update the first data point's values as an example
-                    const firstPoint = routeData.coordinates[0];
-                    document.getElementById('elevationDisplay').textContent = `Elevation: ${firstPoint.ele} meters`;
-                    document.getElementById('heartRateDisplay').textContent = `Heart Rate: ${firstPoint.hr || '--'} bpm`;
-                    document.getElementById('cadenceDisplay').textContent = `Cadence: ${firstPoint.cad || '--'} rpm`;
-                    document.getElementById('temperatureDisplay').textContent = `Temperature: ${firstPoint.atemp || '--'} °C`;
+    //File input handling
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const gpxText = e.target.result;
+                routeData = parseGPX(gpxText);
+                console.log(routeData);
 
-                    preloadTerrainData(routeData.coordinates, viewer.terrainProvider, () => {
-                        console.log("Terrain data preloaded");
-                        document.getElementById('startButton').disabled = false;
-                    });
-                    window.visualizeRoute(routeData, viewer, animationControl, speedControl);
-                    window.processRouteForMileMarkers(routeData, viewer);
-                };
-                reader.readAsText(file);
-            }
-        });
+                let distances = calculateTotalDistances(routeData.coordinates);
 
+                document.getElementById('routeNameDisplay').textContent = `Route: ${routeData.name}`;
+                // Update the first data point's values as an example
+                const firstPoint = routeData.coordinates[0];
+                document.getElementById('elevationDisplay').textContent = `Elevation: ${firstPoint.ele} meters`;
+                document.getElementById('heartRateDisplay').textContent = `Heart Rate: ${firstPoint.hr || '--'} bpm`;
+                document.getElementById('cadenceDisplay').textContent = `Cadence: ${firstPoint.cad || '--'} rpm`;
+                document.getElementById('temperatureDisplay').textContent = `Temperature: ${firstPoint.atemp || '--'} °C`;
 
-        document.getElementById('startButton').addEventListener('click', () => {
-            if (animationControl.isFirstStart && routeData) {
-                // Ensure routeData is available before flying to start
-                flyToStart(viewer, Cesium.Cartesian3.fromDegrees(routeData.coordinates[0].lon, routeData.coordinates[0].lat, routeData.coordinates[0].ele), () => {
-                    animationControl.isAnimating = true;
-                    animationControl.isFirstStart = false;
+                preloadTerrainData(routeData.coordinates, viewer.terrainProvider, () => {
+                    console.log("Terrain data preloaded");
+                    document.getElementById('startButton').disabled = false;
                 });
-            } else {
+                window.visualizeRoute(routeData, viewer, animationControl, speedControl, useEstimatedPace, distances);
+                window.processRouteForMileMarkers(routeData, viewer, useEstimatedPace);
+
+                // Initialize sub-checkboxes based on the main checkbox's state
+                const initialShowMileMarkers = document.getElementById('toggleMileMarkers').checked;
+                document.getElementById('togglePaceDisplay').disabled = !initialShowMileMarkers;
+                document.getElementById('toggleTimeDisplay').disabled = !initialShowMileMarkers;
+
+                // Event listener for the main checkbox
+                document.getElementById('toggleMileMarkers').addEventListener('change', function() {
+                    const shouldShow = this.checked;
+                    window.toggleMileMarkers(shouldShow);
+
+                    // Enable or disable sub-checkboxes
+                    document.getElementById('togglePaceDisplay').disabled = !shouldShow;
+                    document.getElementById('toggleTimeDisplay').disabled = !shouldShow;
+
+                    // Update display settings based on the new state
+                    const showPace = document.getElementById('togglePaceDisplay').checked;
+                    const showTime = document.getElementById('toggleTimeDisplay').checked;
+                    window.updateMileMarkerDisplay({ showPace: shouldShow && showPace, showTime: shouldShow && showTime });
+                });
+            };
+            reader.readAsText(file);
+        }
+    });
+
+    //Button Controls
+    document.getElementById('startButton').addEventListener('click', () => {
+        if (animationControl.isFirstStart && routeData) {
+            // Ensure routeData is available before flying to start
+            flyToStart(viewer, Cesium.Cartesian3.fromDegrees(routeData.coordinates[0].lon, routeData.coordinates[0].lat, routeData.coordinates[0].ele), () => {
                 animationControl.isAnimating = true;
-            }
-        });
+                animationControl.isFirstStart = false;
+            });
+        } else {
+            animationControl.isAnimating = true;
+        }
+    });
     
     document.getElementById('pauseButton').addEventListener('click', () => {
         animationControl.isAnimating = false;
@@ -81,8 +105,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     document.getElementById('togglePace').addEventListener('change', function() {
-        const useEstimatedPace = this.checked;
+        useEstimatedPace = this.checked;
         window.updateMileMarkers(viewer, routeData, useEstimatedPace);
+    });
+
+    // Event listeners for sub-checkboxes
+    document.getElementById('togglePaceDisplay').addEventListener('change', function() {
+        const showPace = this.checked;
+        window.updateMileMarkerDisplay({ showPace });
+    });
+
+    document.getElementById('toggleTimeDisplay').addEventListener('change', function() {
+        const showTime = this.checked;
+        window.updateMileMarkerDisplay({ showTime });
     });
     
 });
