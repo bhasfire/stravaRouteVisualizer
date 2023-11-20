@@ -2,21 +2,37 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>CesiumJS 3D Tiles Parse GPX File</title>
+  <title>3D Route Runner</title>
   <script src="https://ajax.googleapis.com/ajax/libs/cesiumjs/1.105/Build/Cesium/Cesium.js"></script>
   <link href="https://ajax.googleapis.com/ajax/libs/cesiumjs/1.105/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-  <input type="file" id="fileInput" accept=".gpx" />
-  <button id="startButton">Start</button>
-  <button id="pauseButton">Pause</button>
-  <button id="speedUpButton">Speed Up</button>
-  <button id="speedDownButton">Speed Down</button>
-  <label>
-    <input type="checkbox" id="togglePace" checked>
-    Use Moving Time Pace
-  </label>
-  <div id="cesiumContainer" style="width: 100%; height: 100vh;"></div>
+<body class="bg-gray-100">
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <div class="flex flex-col w-64 h-full p-4 bg-white bg-opacity-70 backdrop-filter backdrop-blur-lg">
+      <input type="file" id="fileInput" accept=".gpx" class="form-control block w-full mb-4 px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" />
+      <button id="startButton" class="px-4 py-2 mb-2 bg-blue-500 text-white font-semibold rounded hover:bg-blue-700">Start</button>
+      <button id="pauseButton" class="px-4 py-2 mb-2 bg-gray-500 text-white font-semibold rounded hover:bg-gray-700">Pause</button>
+      <button id="speedUpButton" class="px-4 py-2 mb-2 bg-green-500 text-white font-semibold rounded hover:bg-green-700">Speed Up</button>
+      <button id="speedDownButton" class="px-4 py-2 mb-2 bg-red-500 text-white font-semibold rounded hover:bg-red-700">Slow Down</button>
+      <label class="form-check mb-4">
+        <input type="checkbox" id="togglePace" class="form-checkbox h-5 w-5 text-blue-600" checked>
+        <span class="ml-2 text-gray-700">Use Moving Time Pace</span>
+      </label>
+      <div id="timeDisplay" class="time-display-class">Time: --:--:--</div>
+      <div id="paceDisplay" class="pace-display-class">Pace: -- min/mi</div>
+      <div id="routeNameDisplay">Route: --</div>
+      <div id="elevationDisplay" class="elevation-display-class">Elevation: -- meters</div>
+      <div id="heartRateDisplay">Heart Rate: -- bpm</div>
+      <div id="cadenceDisplay">Cadence: -- rpm</div>
+      <div id="temperatureDisplay">Temperature: -- °C</div>
+
+    </div>
+    <!-- Cesium Container -->
+    <div class="flex-grow" id="cesiumContainer"></div>
+  </div>
   <script src="scripts/gpxParser.js"></script>
   <script src="scripts/routeVisualizer.js"></script>
   <script src="scripts/mileMarker.js"></script>

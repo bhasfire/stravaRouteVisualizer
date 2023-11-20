@@ -8,39 +8,22 @@ let viewer;
 let routeData; // Declare a variable to store the route data
 let animationControl = { isAnimating: false, isFirstStart: true };
 let speedControl = { speed: 0.1 }; 
+// let useEstimatedPace = true; // Default value based on checkbox's initial state
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    const terrainProvider = await Cesium.createWorldTerrainAsync();
     viewer = new Cesium.Viewer('cesiumContainer', {
-        terrainProvider: Cesium.createWorldTerrain(),
-
+        terrainProvider: terrainProvider,
     });
 
     // Add Google's Photorealistic 3D Tiles
-    const tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
-        // url: 'https://tile.googleapis.com/v1/3dtiles/root.json?key=${process.env.GOOGLE_TILESET_KEY}',
-        url: 'https://tile.googleapis.com/v1/3dtiles/root.json?key=AIzaSyCbWqOhzPZhDPVbRS_xd4p9KsHTZKbmju4',
-        showCreditsOnScreen: false,
-    }));
-
-    // fetch('data/atx23_marathon.gpx')
-    //     .then(response => response.text())
-    //     .then(gpxText => {
-    //         routeData = parseGPX(gpxText); // Assign data to the global variable
-    //         console.log(routeData); // Log to check the route data
-
-    //         // Call preloadTerrainData here
-    //         preloadTerrainData(routeData.coordinates, viewer.terrainProvider, () => {
-    //             console.log("Terrain data preloaded");
-    //             document.getElementById('startButton').disabled = false;
-    //         });
-
-    //         window.visualizeRoute(routeData, viewer, animationControl, speedControl);
-    //         window.processRouteForMileMarkers(routeData, viewer);
-
-    //     })
-    //     .catch(error => {
-    //         console.error('Error fetching or parsing GPX file:', error);
-    //     });
+    Cesium.Cesium3DTileset.fromUrl('https://tile.googleapis.com/v1/3dtiles/root.json?key=AIzaSyCbWqOhzPZhDPVbRS_xd4p9KsHTZKbmju4')
+    .then(tileset => {
+        viewer.scene.primitives.add(tileset);
+    })
+    .catch(error => {
+        console.error('Error loading 3D Tiles:', error);
+    });
 
         document.getElementById('fileInput').addEventListener('change', function(event) {
             const file = event.target.files[0];
@@ -50,6 +33,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     const gpxText = e.target.result;
                     routeData = parseGPX(gpxText);
                     console.log(routeData);
+
+                    document.getElementById('routeNameDisplay').textContent = `Route: ${routeData.name}`;
+                    // Update the first data point's values as an example
+                    const firstPoint = routeData.coordinates[0];
+                    document.getElementById('elevationDisplay').textContent = `Elevation: ${firstPoint.ele} meters`;
+                    document.getElementById('heartRateDisplay').textContent = `Heart Rate: ${firstPoint.hr || '--'} bpm`;
+                    document.getElementById('cadenceDisplay').textContent = `Cadence: ${firstPoint.cad || '--'} rpm`;
+                    document.getElementById('temperatureDisplay').textContent = `Temperature: ${firstPoint.atemp || '--'} °C`;
+
                     preloadTerrainData(routeData.coordinates, viewer.terrainProvider, () => {
                         console.log("Terrain data preloaded");
                         document.getElementById('startButton').disabled = false;
@@ -59,8 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
                 reader.readAsText(file);
             }
-            const useEstimatedPace = document.getElementById('togglePace').checked;
-            window.processRouteForMileMarkers(routeData, viewer, useEstimatedPace);
         });
 
 
