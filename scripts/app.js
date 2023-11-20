@@ -22,24 +22,45 @@ document.addEventListener('DOMContentLoaded', () => {
         showCreditsOnScreen: false,
     }));
 
-    fetch('data/atx23_marathon.gpx')
-        .then(response => response.text())
-        .then(gpxText => {
-            routeData = parseGPX(gpxText); // Assign data to the global variable
-            console.log(routeData); // Log to check the route data
+    // fetch('data/atx23_marathon.gpx')
+    //     .then(response => response.text())
+    //     .then(gpxText => {
+    //         routeData = parseGPX(gpxText); // Assign data to the global variable
+    //         console.log(routeData); // Log to check the route data
 
-            // Call preloadTerrainData here
-            preloadTerrainData(routeData.coordinates, viewer.terrainProvider, () => {
-                console.log("Terrain data preloaded");
-                document.getElementById('startButton').disabled = false;
-            });
+    //         // Call preloadTerrainData here
+    //         preloadTerrainData(routeData.coordinates, viewer.terrainProvider, () => {
+    //             console.log("Terrain data preloaded");
+    //             document.getElementById('startButton').disabled = false;
+    //         });
 
-            window.visualizeRoute(routeData, viewer, animationControl, speedControl);
-            window.processRouteForMileMarkers(routeData, viewer);
+    //         window.visualizeRoute(routeData, viewer, animationControl, speedControl);
+    //         window.processRouteForMileMarkers(routeData, viewer);
 
-        })
-        .catch(error => {
-            console.error('Error fetching or parsing GPX file:', error);
+    //     })
+    //     .catch(error => {
+    //         console.error('Error fetching or parsing GPX file:', error);
+    //     });
+
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const gpxText = e.target.result;
+                    routeData = parseGPX(gpxText);
+                    console.log(routeData);
+                    preloadTerrainData(routeData.coordinates, viewer.terrainProvider, () => {
+                        console.log("Terrain data preloaded");
+                        document.getElementById('startButton').disabled = false;
+                    });
+                    window.visualizeRoute(routeData, viewer, animationControl, speedControl);
+                    window.processRouteForMileMarkers(routeData, viewer);
+                };
+                reader.readAsText(file);
+            }
+            const useEstimatedPace = document.getElementById('togglePace').checked;
+            window.processRouteForMileMarkers(routeData, viewer, useEstimatedPace);
         });
 
 
@@ -67,6 +88,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('speedDownButton').addEventListener('click', () => {
         speedControl.speed -= 0.5; // Decrease speed
         console.log("Speed decreased to:", speedControl.speed); // Log the new speed
+    });
+
+    document.getElementById('togglePace').addEventListener('change', function() {
+        const useEstimatedPace = this.checked;
+        window.updateMileMarkers(viewer, routeData, useEstimatedPace);
     });
     
 });

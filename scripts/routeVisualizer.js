@@ -13,7 +13,7 @@ function visualizeRoute(data, viewer, isAnimating, speed) {
     viewer.entities.add({
         polyline: {
             positions: positions,
-            width: 10,
+            width: 20,
             material: new Cesium.PolylineGlowMaterialProperty({
                 color: Cesium.Color.RED.withAlpha(0.6)
             }),

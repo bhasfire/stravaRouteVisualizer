@@ -13,7 +13,8 @@ function parseGPX(gpxText) {
       const lat = parseFloat(trkpt.getAttribute("lat"));
       const lon = parseFloat(trkpt.getAttribute("lon"));
       const ele = parseFloat(trkpt.getElementsByTagName("ele")[0].textContent);
-      route.push({ lat, lon, ele });
+      const time = trkpt.getElementsByTagName("time")[0]?.textContent; // Extract time
+      route.push({ lat, lon, ele, time });
   }
 
   return { name, coordinates: route };
