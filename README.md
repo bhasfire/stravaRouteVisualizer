@@ -14,7 +14,7 @@ Check out the live version of the 3D Route Runner [HERE](https://bhasfire.github
 
 If you don't have a GPX file, you can use one of the demo files provided. Simply download one of the files below and upload it to the visualizer:
 
-- [Demo File 1]([link-to-demo-file-1-in-your-repo](https://github.com/bhasfire/stravaRouteVisualizer/blob/master/data/18mi_long_run.gpx))
+- [Demo File 1](https://github.com/bhasfire/stravaRouteVisualizer/blob/master/data/18mi_long_run.gpx)
 - [Demo File 2](link-to-demo-file-2-in-your-repo)
 - [Demo File 3](link-to-demo-file-3-in-your-repo)
 
