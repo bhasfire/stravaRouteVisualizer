@@ -19,7 +19,7 @@ If you don't have a GPX file, you can use one of the demo files provided. Simply
 - [Demo File 2 - Austin Marathon 20233](https://github.com/bhasfire/stravaRouteVisualizer/blob/master/data/AustinMarathon2023.gpx) (note: this file does not contain HR, cad, tmp data)
 - [Demo File 3 - Ironman Lake Placid '23 - Run Leg](https://github.com/bhasfire/stravaRouteVisualizer/blob/master/data/IRONMAN_LP_Run.gpx) (note: some google maps locations don't support 3D tiles (only 2D), hence why the terrain for this file loads in 2D)
 - [Demo File 4 - 10mi Training Run](https://github.com/bhasfire/stravaRouteVisualizer/blob/master/data/Morning_10mi_run.gpx)
-- [Demo File 4 - Ironman Bike Leg - 112mi](https://github.com/bhasfire/stravaRouteVisualizer/blob/master/data/Ironman_Lake_Placid_Bike_Leg.gpx)
+- [Demo File 5 - Ironman Bike Leg - 112mi](https://github.com/bhasfire/stravaRouteVisualizer/blob/master/data/Ironman_Lake_Placid_Bike_Leg.gpx)
 
 ## Features
 
