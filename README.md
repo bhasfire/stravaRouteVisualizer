@@ -9,7 +9,7 @@ To use the 3D Route Runner, you will need a GPX file of your activity. You can o
 
 ### Try It Yourself
 
-Check out the live version of the 3D Route Runner [HERE](https://bhasfire.github.io/stravaRouteVisualizer/).
+Check out the live version of the 3D Route Runner [TRY IT YOURSELF HERE](https://bhasfire.github.io/stravaRouteVisualizer/).
 
 ### Using a Demo File
 
