@@ -14,8 +14,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const terrainProvider = await Cesium.createWorldTerrainAsync();
     viewer = new Cesium.Viewer('cesiumContainer', {
         terrainProvider: terrainProvider,
+        // Enable lighting effects
+        scene3DOnly: true,
+        shadows: true,
+        shouldAnimate: true,
+        sunlight: true,
+        moonlight: true
     });
-
+    const isDynamicLightingEnabled = document.getElementById('toggleDynamicLighting').checked;
+    viewer.scene.globe.enableLighting = isDynamicLightingEnabled;
+    
     // Add Google's Photorealistic 3D Tiles
     Cesium.Cesium3DTileset.fromUrl('https://tile.googleapis.com/v1/3dtiles/root.json?key=AIzaSyCbWqOhzPZhDPVbRS_xd4p9KsHTZKbmju4')
     .then(tileset => {
@@ -118,6 +126,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('toggleTimeDisplay').addEventListener('change', function() {
         const showTime = this.checked;
         window.updateMileMarkerDisplay({ showTime });
+    });
+    document.getElementById('toggleDynamicLighting').addEventListener('change', function() {
+        viewer.scene.globe.enableLighting = this.checked;
     });
     
 });

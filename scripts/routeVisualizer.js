@@ -8,6 +8,23 @@ function visualizeRoute(data, viewer, animationControl, speedControl, useEstimat
 
     let currentHeading = 0;
     let targetHeading = 0;
+    
+    
+    // Extract the initial timestamp and set the viewer's clock
+    const initialTimestamp = data.coordinates[0].time;
+    const startTime = Cesium.JulianDate.fromIso8601(initialTimestamp);
+    
+    const timeZoneOffset = -5; // UTC-5 hours for example
+
+    // Adjust start time for time zone
+    const adjustedStartTime = Cesium.JulianDate.addHours(startTime, timeZoneOffset, new Cesium.JulianDate());
+
+    viewer.clock.currentTime = adjustedStartTime;
+    viewer.clock.multiplier = 1; // Real-time playback
+    viewer.clock.shouldAnimate = true;
+
+    console.log("GPX Start Time (UTC):", initialTimestamp);
+    console.log("Adjusted Start Time (Local):", Cesium.JulianDate.toIso8601(adjustedStartTime));
 
     // Create the polyline
     viewer.entities.add({
@@ -42,6 +59,8 @@ function visualizeRoute(data, viewer, animationControl, speedControl, useEstimat
 
     viewer.clock.onTick.addEventListener(() => {
         if (!animationControl.isAnimating) return;
+
+        //console.log("Viewer's Current Time:", Cesium.JulianDate.toIso8601(viewer.clock.currentTime));
 
         currentIndex += speedControl.speed;
         if (currentIndex >= totalPoints) {

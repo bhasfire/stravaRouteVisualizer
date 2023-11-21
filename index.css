@@ -1,0 +1,148 @@
+/* Sidebar Styles */
+.sidebar {
+    /* Other styling */
+    display: flex;
+    flex-direction: column;
+    opacity: 0.9;
+    backdrop-filter: blur(10px);
+}
+
+.sidebar-header {
+    font-size: 1.25rem; /* Example font size, adjust as needed */
+    font-weight: bold; /* Example font weight, adjust as needed */
+    text-align: center; /* Center the text */
+    margin-bottom: 2rem; /* Add some space below the header */
+    color: #333; /* Example text color, adjust as needed */
+  }
+  
+  
+  /* General button styles */
+  .button {
+    width: 100%;
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    color: white;
+    font-weight: bold;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    text-align: center;
+  }
+  
+  /* File input styling */
+  .file-input {
+    display: block;
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 3px;
+    font-size: 1rem;
+    font-weight: normal;
+    color: #4a4a4a;
+    background-color: white;
+    border: 1px solid #d3d3d3;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .file-input:focus {
+    color: #4a4a4a;
+    background-color: white;
+    border-color: #3182ce;
+    outline: none;
+  }
+  
+  /* Toggle switch styling */
+  .form-check {
+    margin-bottom: 1rem;
+  }
+  
+  .form-check span {
+    margin-left: 2px;
+    font-size: 0.8rem; /* Adjust the font size as needed */
+    color: gray-700;
+  }
+  
+  /* Toggle switch styling */
+.toggle-switch {
+  display: none;
+}
+
+.toggle-switch + label {
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+  background-color: #ccc;
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+.toggle-switch + label::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+/* Display Data Styles */
+.display-data {
+    margin-bottom: 0.25rem; /* Adjust the bottom margin as needed */
+}
+
+.toggle-switch:checked + label {
+  background-color: #2196F3;
+}
+
+.toggle-switch:checked + label::before {
+  transform: translateX(20px);
+}
+
+/* Dropdown Styles */
+.dropdown {
+    width: 100%;
+    margin-top: auto; /* Pushes the dropdown to the bottom */
+    position: relative;
+}
+  
+  .dropdown-button {
+    width: 100%; /* Full width */
+    padding: 0.5rem;
+    background-color: lightgray; /* Light gray background */
+    border: none;
+    cursor: pointer;
+}
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    bottom: 100%; /* Position upwards */
+    background-color: #f9f9f9;
+    min-width: 90%;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 1rem;
+    z-index: 1;
+}
+
+/* Live Data Container Styles */
+.live-data-container {
+    border: 1px solid #d3d3d3; /* Light grey border */
+    padding: 1rem; /* Padding inside the container */
+    margin-top: 1rem; /* Space above the container */
+    position: relative; /* Needed for positioning the header */
+}
+
+.live-data-header {
+    position: absolute; /* Absolute positioning */
+    top: -0.5rem; /* Positioning above the container */
+    left: 1rem; /* Horizontal positioning */
+    background-color: white; /* Background to overlap the border */
+    padding: 0 0.5rem; /* Padding for the header */
+    color: #333; /* Text color */
+    font-weight: bold; /* Bold font */
+}
+
