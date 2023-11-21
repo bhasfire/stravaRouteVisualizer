@@ -17,10 +17,9 @@ If you don't have a GPX file, you can use one of the demo files provided. Simply
 - [Demo File 1 - 18mi Long Run in Austin](https://github.com/bhasfire/stravaRouteVisualizer/blob/master/data/18mi_long_run.gpx)
 - [Demo File 2 - Austin Marathon 20233](https://github.com/bhasfire/stravaRouteVisualizer/blob/master/data/AustinMarathon2023.gpx)
 - [Demo File 3 - Ironman Lake Placid '23 - Run Leg](https://github.com/bhasfire/stravaRouteVisualizer/blob/master/data/IRONMAN_LP_Run.gpx)
-- [Demo File 4 - 10mi Training Run](https://github.com/bhasfire/stravaRouteVisualizer/blob/master/data/Morning_10mi_run.gpx)
+- [Demo File 4 - 10mi Training Run]https://github.com/bhasfire/stravaRouteVisualizer/blob/master/data/Morning_10mi_run.gpx
 
 
-Replace `link-to-demo-file-x-in-your-repo` with the actual URL to the raw version of the demo files in your repository.
 
 ## Features
 
