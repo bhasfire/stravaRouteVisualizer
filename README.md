@@ -1,6 +1,6 @@
 # 3D Route Runner
 
-Visualize your Strava route in 3D using Photorealistic 3D Tiles and CesiumJS. This tool allows you to upload a GPX file and see your route brought to life in a three-dimensional environment.
+Visualize your outdoor activity in 3D using Photorealistic 3D Tiles and CesiumJS. This tool allows you to upload a GPX file and see your route brought to life in a three-dimensional environment.
 
 ## Getting Started
 
