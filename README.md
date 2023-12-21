@@ -41,7 +41,3 @@ Your feedback is important! If you have suggestions or encounter any issues, ple
 ## Contributing
 
 Contributions are welcome! Please feel free to fork the repository and submit pull requests.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
