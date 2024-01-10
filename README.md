@@ -1,4 +1,6 @@
-# 3D Route Runner
+# [3D Route Runner](https://bhasfire.github.io/stravaRouteVisualizer/)
+
+![Thumbnail](RouteDemoSS.png)
 
 Visualize your outdoor activities in 3D using Photorealistic 3D Tiles and CesiumJS. This tool allows you to upload a GPX file and see your route brought to life in a three-dimensional environment.
 Checkout a video demo here: https://www.youtube.com/watch?v=E7JugRiFAP8
