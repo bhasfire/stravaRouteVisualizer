@@ -7,11 +7,7 @@ Checkout a video demo here: https://www.youtube.com/watch?v=E7JugRiFAP8
 
 ## Getting Started
 
-To use the 3D Route Runner, you will need a GPX file of your activity. You can obtain this file from services like Strava, Garmin Connect, etc. Once you have your GPX file, you can upload it to the visualizer and see your route in 3D.
-
-### Try It Yourself
-
-Check out the live version of the 3D Route Runner [TRY IT YOURSELF HERE](https://bhasfire.github.io/stravaRouteVisualizer/).
+To use the 3D Route Runner, you will need a GPX file of your activity. You can obtain this file from services like Strava, Garmin Connect, etc. Once you have your GPX file, you can upload it to the visualizer and see your route in 3D. [Try It Yourself](https://bhasfire.github.io/stravaRouteVisualizer/)
 
 ### Using a Demo File
 
